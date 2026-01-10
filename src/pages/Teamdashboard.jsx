@@ -1,96 +1,214 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Layout, GitBranch, Github, Code, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Layout, BarChart3, Github, LogOut, ChevronDown, Info, ShieldCheck } from 'lucide-react';
+import MetricCard from '../component/MetricCard.jsx'; 
+import TrendCharts from '../component/TrendChart';
+import { fetchTrendMetrics } from '../services/analytics';
 
 const TeamDashboard = () => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+    const [trendData, setTrendData] = useState([]);
+    const [loading, setLoading] = useState(true); 
+    
+    const [userData, setUserData] = useState({
+        username: '',
+        avatar: '',
+        role: '',
+        teamName: '',
+        monitoredRepos: [] 
+    });
 
+    const [metrics, setMetrics] = useState({
+        avgCycleTime: { hrs: '0.0h', mins: '0m' },
+        activePRs: 0,
+        throughput: 0,
+        avgPrSize: 0
+    });
+
+    // 1. केवल असाइन की गई रिपोज़ के मैट्रिक्स लाना
+    useEffect(() => {
+        const fetchMetrics = async () => {
+            setLoading(true);
+            try {
+                const res = await axios.get(`http://localhost:3000/api/manager/manager-analytics/${userId}`);
+                setMetrics(res.data);
+            } catch (err) {
+                console.error("Error fetching metrics:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        if (userId) fetchMetrics();
+    }, [userId]);
+
+    // 2. ट्रेंड डेटा
+    useEffect(() => {
+        const getTrends = async () => {
+            if (userId) {
+                try {
+                    const data = await fetchTrendMetrics(userId, 'all'); 
+                    setTrendData(data);
+                } catch (err) {
+                    console.error("Trend Error:", err);
+                }
+            }
+        };
+        getTrends();
+    }, [userId]);
+
+    // 3. प्रोफाइल डेटा फेच
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 const res = await axios.get(`http://localhost:3000/api/v1/auth/users/github/${userId}`);
-                setUser(res.data);
-                setLoading(false);
+                setUserData({
+                    username: res.data.username,
+                    avatar: res.data.avatar_url || `https://ui-avatars.com/api/?name=${res.data.username}`,
+                    role: res.data.role,
+                    teamName: res.data.teamName || 'Engineering Squad',
+                    monitoredRepos: res.data.monitoredRepos || [] 
+                });
             } catch (err) {
-                console.error("Error fetching team lead data:", err);
-                setLoading(false);
+                console.error("User fetch error:", err);
             }
         };
         if (userId) fetchUserData();
     }, [userId]);
 
-    if (loading) return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate('/');
+    };
 
     return (
-        <div className="min-h-screen bg-slate-50 p-8 font-sans">
-            <div className="flex justify-between items-center mb-8 bg-white p-6 rounded-4xl shadow-sm">
-                <div>
-                    <h1 className="text-3xl font-black text-slate-900">Team Dashboard 🚀</h1>
-                    <p className="text-slate-500 font-bold text-sm">Welcome back, {user?.username} (Team Lead)</p>
+        <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900">
+            {/* Header - No Invite/Settings for Team Lead */}
+            <header className="flex justify-between items-center p-4 md:px-10 bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+                <div className="flex items-center gap-3">
+                    <img src="./images/logo1.png" alt="Logo" className="h-8" />
                 </div>
-                <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-100">
-                    <img src={user?.avatar_url} alt="profile" className="w-10 h-10 rounded-xl shadow-sm" />
-                    <span className="font-black text-xs px-3 py-1 bg-blue-100 text-blue-600 rounded-lg uppercase tracking-wider">
-                        {user?.teamName || "General Team"}
-                    </span>
-                </div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-slate-100">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-200">
-                                <GitBranch size={24} />
-                            </div>
-                            <h2 className="text-xl font-black text-slate-900">Your Assigned Repositories</h2>
-                        </div>
+                <div className="flex items-center gap-6">
+                    <div className="text-right hidden sm:block">
+                        <p className="text-sm font-black text-slate-900 leading-none">{userData.username}</p>
+                        <p className="text-[10px] text-emerald-500 font-black uppercase tracking-widest mt-1">● {userData.role} Access</p>
+                    </div>
+                    
+                    <div className="relative">
+                        <button onClick={() => setIsProfileOpen(!isProfileOpen)} className="flex items-center gap-2 focus:outline-none p-1 hover:bg-slate-50 rounded-2xl transition-all">
+                            <img src={userData.avatar} alt="Profile" className="h-10 w-10 rounded-2xl border-2 border-slate-100 object-cover" />
+                            <ChevronDown size={16} className={`text-slate-400 transition-transform ${isProfileOpen ? 'rotate-180' : ''}`} />
+                        </button>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {user?.monitoredRepos && user.monitoredRepos.length > 0 ? (
-                                user.monitoredRepos.map((repo, index) => (
-                                    <div key={index} className="group p-6 bg-slate-50 rounded-3xl border-2 border-transparent hover:border-blue-500 hover:bg-white transition-all cursor-pointer">
-                                        <div className="flex items-center gap-4">
-                                            <div className="p-3 bg-white rounded-2xl shadow-sm text-slate-400 group-hover:text-blue-600 transition-colors">
-                                                <Github size={20} />
-                                            </div>
-                                            <div>
-                                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Repository</p>
-                                                <h3 className="font-bold text-slate-800 break-all">{repo}</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="col-span-2 text-center py-12 text-slate-400 font-bold border-2 border-dashed border-slate-100 rounded-3xl">
-                                    No repositories assigned yet. Please contact your Manager.
+                        {isProfileOpen && (
+                            <div className="absolute right-0 mt-4 w-64 bg-white rounded-3xl shadow-2xl border border-slate-100 py-3 z-50">
+                                <div className="px-5 py-4 border-b border-slate-50">
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Team Lead Profile</p>
+                                    <p className="text-sm font-black text-emerald-600">@{userData.username}</p>
                                 </div>
-                            )}
-                        </div>
+                                {/* Invite and Settings buttons removed for Team Lead role */}
+                                <div className="pt-2">
+                                    <button onClick={handleLogout} className="w-full text-left px-5 py-3 text-sm font-black text-rose-500 hover:bg-rose-50 flex items-center gap-3 uppercase tracking-widest">
+                                        <LogOut size={18} /> Sign Out
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
+            </header>
 
-                <div className="space-y-6">
-                    <div className="bg-slate-900 text-white p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
-                        <div className="relative z-10">
-                            <h3 className="text-lg font-black mb-2 italic">Developer Experience</h3>
-                            <p className="text-slate-400 text-sm font-bold mb-6 leading-relaxed">
-                                Tracking engineering health across {user?.monitoredRepos?.length} assigned projects.
+            <div className="flex">
+                {/* Sidebar - Viewing Mode Only */}
+                <aside className="w-72 bg-white border-r border-slate-100 p-8 flex flex-col sticky top-20 h-[calc(100vh-80px)]">
+                    <nav className="space-y-3 flex-1">
+                        <button className="w-full flex items-center gap-4 p-4 bg-emerald-50 text-emerald-600 rounded-2xl font-black text-xs uppercase tracking-widest">
+                            <Layout size={18} /> Performance
+                        </button>
+                        <button className="w-full flex items-center gap-4 p-4 text-slate-400 hover:bg-slate-50 rounded-2xl font-black text-xs uppercase tracking-widest transition-all">
+                            <BarChart3 size={18} /> Reports
+                        </button>
+                    </nav>
+
+                    <div className="p-6 bg-slate-900 text-white rounded-3xl">
+                         <div className="flex items-center gap-2 mb-2 text-emerald-400">
+                            <ShieldCheck size={16} />
+                            <h3 className="text-xs font-black italic">Monitoring Active</h3>
+                         </div>
+                         <p className="text-[10px] text-slate-400 font-bold leading-relaxed">
+                            Reporting on {userData.monitoredRepos?.length} assigned repositories.
+                         </p>
+                    </div>
+                </aside>
+
+                <main className="flex-1 p-6 md:p-12 overflow-y-auto">
+                    <div className="max-w-6xl mx-auto">
+                        <div className="mb-12">
+                            <h1 className="text-4xl font-black text-slate-900 tracking-tight mb-2">Team Delivery Status</h1>
+                            <p className="text-slate-400 font-bold uppercase text-[11px] tracking-widest">
+                                Assigned to <span className="text-emerald-600">{userData.teamName}</span>
                             </p>
-                            <div className="p-4 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/10">
-                                <div className="flex items-center gap-3">
-                                    <Info size={16} className="text-blue-400" />
-                                    <span className="text-xs font-bold">Metrics are being synced from GitHub.</span>
-                                </div>
+                        </div>
+
+                        {/* Metrics Cards - Isolated to assigned repos */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+                            <MetricCard 
+                                title="Avg. Cycle Time" 
+                                value={loading ? "..." : (metrics.avgCycleTime?.hrs === "0.0h" ? metrics.avgCycleTime?.mins : metrics.avgCycleTime?.hrs)}       
+                                variant="compact" 
+                                description="Speed to Merge"   
+                            />
+                            <MetricCard 
+                                title="Active PRs" 
+                                value={loading ? "..." : metrics.activePRs} 
+                                variant="compact" 
+                                description="Requiring Attention"
+                            />
+                            <MetricCard 
+                                title="Team Throughput" 
+                                value={loading ? "..." : metrics.throughput} 
+                                variant="compact" 
+                                description="Monthly Output"
+                            />
+                            <MetricCard 
+                                title="Avg. PR Size" 
+                                value={loading ? "..." : `${metrics.avgPrSize || 0} LOC`} 
+                                variant="compact" 
+                                description="Code Complexity"
+                            />
+                        </div>
+
+                        {/* Trend Chart */}
+                        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm mb-12">
+                            <div className="mb-8">
+                                <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Scope Velocity Trend</h2>
+                                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">30 Day Performance Matrix</p>
+                            </div>
+                            <TrendCharts data={trendData} />
+                        </div>
+
+                        {/* Assigned Repos List */}
+                        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                            <div className="flex items-center gap-3 mb-6">
+                                <Info size={16} className="text-slate-400" />
+                                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest">Your Assigned Workspace</h3>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {userData.monitoredRepos.map((repo, index) => (
+                                    <div key={index} className="flex items-center gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-100 group hover:border-emerald-500 transition-all">
+                                        <div className="p-3 bg-white rounded-xl text-slate-400 group-hover:text-emerald-600 shadow-sm">
+                                            <Github size={18} />
+                                        </div>
+                                        <span className="text-xs font-black text-slate-700 uppercase tracking-tight break-all">{repo}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
-                        <div className="absolute -right-4 -bottom-4 opacity-10">
-                            <Code size={150} />
-                        </div>
                     </div>
-                </div>
+                </main>
             </div>
         </div>
     );

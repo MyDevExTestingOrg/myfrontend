@@ -67,7 +67,6 @@ const InviteModal = ({ isOpen, onClose, orgId }) => {
                 orgId, 
                 invitedBy: userId,
                 assignedRepos: selectedRepos,
-                // अगर PM इनवाइट कर रहा है तो वही parentManager है
                 parentManager: userRole === 'ProjectManager' ? userId : selectedManager 
             });
             alert("Invite sent successfully!");
@@ -98,7 +97,7 @@ const InviteModal = ({ isOpen, onClose, orgId }) => {
                                 <select 
                                     className="w-full px-5 py-3 bg-slate-50 border-2 border-slate-100 rounded-2xl font-bold outline-none" 
                                     value={inviteData.role} 
-                                    disabled={userRole === 'ProjectManager'} // PM अपना रोल चेंज नहीं कर सकता
+                                    disabled={userRole === 'ProjectManager'} 
                                     onChange={(e) => setInviteData({...inviteData, role: e.target.value})}
                                 >
                                     <option value="TeamLead">Team Lead</option>
@@ -106,7 +105,6 @@ const InviteModal = ({ isOpen, onClose, orgId }) => {
                                 </select>
                             </div>
 
-                            {/* Manager Selection UI: केवल CTO को दिखेगा और केवल जब वह TeamLead इनवाइट करेगा */}
                             {userRole === 'CTO' && inviteData.role === 'TeamLead' ? (
                                 <div>
                                     <label className="block text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest">Assign to Manager</label>

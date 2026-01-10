@@ -28,6 +28,7 @@ useEffect(() => {
             // setUserData({ username: res.data.username, avatar: res.data.avatar_url, totalRepos: res.data.monitoredRepos ? res.data.monitoredRepos.length : 0 });
         };
         if(userId) fetch();
+
     }, [userId]);
 
 const Delete = async()=>{
@@ -81,7 +82,7 @@ return (
                 <div className="text-center mb-8">
                     <img src={userData.avatar || `https://github.com/${userData.username}.png`} className="h-20 w-20 rounded-2xl mx-auto mb-3 shadow-lg" alt="P" />
                     <h2 className="font-black text-slate-800 tracking-tight">{userData.username}</h2>
-                    <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">CTO / Manager</p>
+                    <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-1">CTO Dashaboard </p>
                 </div>
 
                 <div className="flex-1 space-y-4">

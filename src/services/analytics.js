@@ -11,3 +11,12 @@ export const fetchCTOMetrics = async(userId)=>{
         throw error;
     }
 }
+export const fetchTrendMetrics = async (userId )=>{
+   try {
+        const response = await axios.get(`http://localhost:3000/api/v1/webhooks/trends/${userId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Trend fetch error:", error);
+        return [];
+    }
+}
