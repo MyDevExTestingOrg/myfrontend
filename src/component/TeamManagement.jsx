@@ -7,11 +7,13 @@ const TeamManagement = ({ userId }) => {
     const navigate = useNavigate();
     const [members, setMembers] = useState([]);
     const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 
     const fetchMembers = async () => {
         if (!userId || userId === "undefined") return;
         try {
-            const res = await axios.get(`http://localhost:3000/api/v1/team/${userId}`);
+            const res = await axios.get(`${backendUrl}/api/v1/team/${userId}`);
             setMembers(res.data.members || []);
         } catch (err) {
             console.error("Error fetching members", err);
@@ -23,7 +25,7 @@ const TeamManagement = ({ userId }) => {
     const revokeAccess = async (memberId) => {
         if (window.confirm("Kya aap is member ko nikalna chahte hain?")) {
             try {
-                await axios.delete(`http://localhost:3000/api/v1/team/${memberId}`);
+                await axios.delete(`${backendUrl}/api/v1/team/${memberId}`);
                 fetchMembers();
             } catch (err) {
                 alert("Error: Member nahi hata paye");

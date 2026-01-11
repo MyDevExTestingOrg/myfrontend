@@ -8,7 +8,8 @@ const AcceptInvite = () => {
 
     const handleAccept = () => {
         localStorage.setItem('inviteToken', token);
-        window.location.href = `http://localhost:3000/api/v1/auth/github/login?token=${token}`;
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+        window.location.href = `${backendUrl}/api/v1/auth/github/login?token=${token}`;
     };
 
     return (

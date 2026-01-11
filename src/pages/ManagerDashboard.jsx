@@ -14,6 +14,8 @@ const ManagerDashboard = () => {
     const [isInviteOpen, setIsInviteOpen] = useState(false);
     const [trendData, setTrendData] = useState([]);
     const [loading, setLoading] = useState(true); 
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     
     const [managerData, setManagerData] = useState({
         username: '',
@@ -34,7 +36,7 @@ const ManagerDashboard = () => {
         const fetchMetrics = async () => {
             setLoading(true);
             try {
-                const res = await axios.get(`http://localhost:3000/api/manager/manager-analytics/${userId}`);
+                const res = await axios.get(`${backendUrl}/api/manager/manager-analytics/${userId}`);
                 setScopedMetrics(res.data);
             } catch (err) {
                 console.error("Error fetching scoped metrics:", err);
@@ -62,7 +64,7 @@ const ManagerDashboard = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/v1/auth/users/github/${userId}`);
+                const res = await axios.get(`${backendUrl}/api/v1/auth/users/github/${userId}`);
                 setManagerData({
                     username: res.data.username,
                     avatar: res.data.avatar_url || `https://ui-avatars.com/api/?name=${res.data.username}`,

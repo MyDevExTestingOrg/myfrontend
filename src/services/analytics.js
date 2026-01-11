@@ -13,7 +13,9 @@ export const fetchCTOMetrics = async(userId)=>{
 }
 export const fetchTrendMetrics = async (userId )=>{
    try {
-        const response = await axios.get(`http://localhost:3000/api/v1/webhooks/trends/${userId}`);
+        const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+        const response = await axios.get(`${backendUrl}/api/v1/webhooks/trends/${userId}`);
         return response.data;
     } catch (error) {
         console.error("Trend fetch error:", error);

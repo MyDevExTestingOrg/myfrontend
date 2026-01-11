@@ -4,22 +4,20 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, GitCommit, AlertCircle } from 'lucide-react';
 
 // TeamActivity.jsx
-const TeamActivity = () => { // Props nikaal dein kyunki data API se aa raha hai
+const TeamActivity = () => { 
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
     
-    const [teamLeads, setTeamLeads] = useState([]); // Array initialize karein
+    const [teamLeads, setTeamLeads] = useState([]); 
     const [loading, setLoading] = useState(true);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
         const fetchTeamActivity = async () => {
             try {
                 setLoading(true);
-                // URL check: ManagerId pass ho rahi hai
-                const res = await axios.get(`http://localhost:3000/api/manager/invitations/${userId}`);
+                const res = await axios.get(`${backendUrl}/api/manager/invitations/${userId}`);
                 
-                // DATA SYNC: res.data direct array hai ya object? 
-                // Aapke teamleadstatus controller ke hisaab se res.data ek array hai
                 setTeamLeads(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error("Error fetching activity:", err);
@@ -35,7 +33,6 @@ const TeamActivity = () => { // Props nikaal dein kyunki data API se aa raha hai
 
     return (
         <div className="min-h-screen bg-[#f8fafc] p-8 font-sans">
-            {/* Header ... (Keep same) */}
             
             <div className="max-w-6xl mx-auto grid grid-cols-1 gap-6">
                 {teamLeads.length > 0 ? (

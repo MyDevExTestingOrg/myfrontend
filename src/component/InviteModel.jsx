@@ -16,25 +16,21 @@ const InviteModal = ({ isOpen, onClose, orgId }) => {
         const initData = async () => {
             if (!isOpen) return;
             try {
-                // CASE 1: अगर CTO लॉगिन है
+                const backendUrl = import.meta.env.VITE_BACKEND_URL;
                 if (userRole === 'CTO') {
                     if (inviteData.role === 'TeamLead') {
-                        // CTO को Managers चुनने की ज़रूरत है
-                        const res = await axios.get('http://localhost:3000/api/v1/auth/users/role/ProjectManager');
+                        const res = await axios.get(`${backendUrl}/api/v1/auth/users/role/ProjectManager`);
                         setManagers(res.data);
                     } else {
-                        // CTO जब PM को इनवाइट करे तो अपनी सारी Repos दिखाए
-                        const res = await axios.get(`http://localhost:3000/api/v1/auth/users/github/${userId}`);
+                        const res = await axios.get(`${backendUrl}/api/v1/auth/users/github/${userId}`);
                         setAvailableRepos(res.data.monitoredRepos || []);
                     }
                 } 
-                // CASE 2: अगर Project Manager लॉगिन है
                 else if (userRole === 'ProjectManager') {
-                    // PM को ड्रॉपडाउन नहीं दिखेगा, सीधे उसकी Assigned Repos लोड होंगी
-                    const res = await axios.get(`http://localhost:3000/api/v1/auth/users/github/${userId}`);
+                    const res = await axios.get(`${backendUrl}/api/v1/auth/users/github/${userId}`);
                     setAvailableRepos(res.data.monitoredRepos || []);
-                    setInviteData(prev => ({ ...prev, role: 'TeamLead' })); // PM केवल TeamLead इनवाइट कर सकता है
-                }
+                    setInviteData(prev => ({ ...prev, role: 'TeamLead' })); 
+                                }
             } catch (err) {
                 console.error("Initialization error:", err);
             }
@@ -42,7 +38,6 @@ const InviteModal = ({ isOpen, onClose, orgId }) => {
         initData();
     }, [isOpen, inviteData.role, userId, userRole]);
 
-    // CTO द्वारा मैनेजर चुनने पर रिपोज़ फ़िल्टर करना
     useEffect(() => {
         if (userRole === 'CTO' && inviteData.role === 'TeamLead' && selectedManager) {
             const managerData = managers.find(m => m._id === selectedManager);
@@ -62,7 +57,7 @@ const InviteModal = ({ isOpen, onClose, orgId }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:3000/api/v1/auth/invite', { 
+            await axios.post(`${backendUrl}/api/v1/auth/invite`, { 
                 ...inviteData, 
                 orgId, 
                 invitedBy: userId,

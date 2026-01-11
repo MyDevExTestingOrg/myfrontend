@@ -19,6 +19,8 @@ const Dashboard = () => {
     const [trendData, setTrendData] = useState([]);
     
     const { metrics, loading } = useAnalytics(userId, selectedOrg); 
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 
     useEffect(() => {
         if (userId) {
@@ -29,7 +31,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchOrgs = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/v1/auth/user/orgs/${userId}`);
+                const res = await axios.get(`${backendUrl}/api/v1/auth/user/orgs/${userId}`);
                 setAvailableOrgs(res.data.orgs || []);
             } catch (err) {
                 console.error("Error fetching orgs:", err);
@@ -41,7 +43,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/v1/auth/users/github/${userId}`);
+                const res = await axios.get(`${backendUrl }/api/v1/auth/users/github/${userId}`);
                 setUserData({
                     username: res.data.username,
                     avatar: res.data.avatar_url || `https://ui-avatars.com/api/?name=${res.data.username}`
@@ -55,7 +57,7 @@ const Dashboard = () => {
 
     const fetchMonitorRepos = async () => {
         try {
-            const res = await axios.get(`http://localhost:3000/api/v1/auth/monitoredRepos/${userId}`);
+            const res = await axios.get(`${backendUrl }/api/v1/auth/monitoredRepos/${userId}`);
             setMonitorRepos(res.data || []); 
             setIsRepoModalOpen(true); 
             setIsProfileOpen(false);  

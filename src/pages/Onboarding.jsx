@@ -14,6 +14,8 @@ function Onboarding() {
     const [selectedRepos, setSelectedRepos] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const [filterOrg, setFilterOrg] = useState("all");
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 
     useEffect(() => {
         if (!userId) return;
@@ -23,11 +25,11 @@ function Onboarding() {
             try {
                 setLoading(true);
                 // User info fetch karna
-                const userRes = await axios.get(`http://localhost:3000/api/v1/auth/users/github/${userId}`);
+                const userRes = await axios.get(`${backendUrl}/api/v1/auth/users/github/${userId}`);
                 setUsername(userRes.data.username);
 
                 // Orgs aur Repos fetch karna
-                const res = await axios.get(`http://localhost:3000/api/v1/auth/user/orgs/${userId}`);
+                const res = await axios.get(`${backendUrl}/api/v1/auth/user/orgs/${userId}`);
                 setOrganizations(res.data.orgs || []);
                 setRepos(res.data.repos || []);
             } catch (err) {
@@ -78,7 +80,7 @@ function Onboarding() {
         try {
             setSubmitting(true);
             // Selected repos ko organization data ke saath bhejna
-            await axios.post(`http://localhost:3000/api/v1/auth/setup-repos`, {
+            await axios.post(`${backendUrl}/api/v1/auth/setup-repos`, {
                 userId,
                 monitoredRepos: selectedRepos 
             });

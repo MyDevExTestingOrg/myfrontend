@@ -13,7 +13,7 @@ function Navbar({ darkMode, setDarkMode }) {
             
             if (token && userId) {
                 try {
-                    await axios.get(`http://localhost:3000/api/v1/auth/users/github/${userId}`, {
+                    await axios.get(`${backendUrl}/api/v1/auth/users/github/${userId}`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setIsAuthenticated(true);
@@ -42,7 +42,6 @@ function Navbar({ darkMode, setDarkMode }) {
         <div className="sticky top-0 shadow z-50 bg-white font-black border-b border-gray-100">
             <div className="flex justify-between items-center px-4 max-w-7xl mx-auto">
                 
-                {/* --- Left Side: Logo & Menu --- */}
                 <div className="flex items-center gap-1">
                     <Link to="/">
                         <img className="mx-2 p-2 h-16" src="./images/logo1.png" alt="DevEx Monitor Logo" />

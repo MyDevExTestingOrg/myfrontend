@@ -4,8 +4,10 @@ import { fetchCTOMetrics } from '../services/analytics.js';
 export const useAnalytics = (userId, selectedOrg , focusedProject) => { 
     const [metrics, setMetrics] = useState(null);
     const [loading, setLoading] = useState(true);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     const fetchMetrics = async () => {
-        const url = `http://localhost:3000/api/v1/analytics/cto/${userId}?org=${selectedOrg}&project=${focusedProject}`;
+        const url = `${backendUrl}/api/v1/analytics/cto/${userId}?org=${selectedOrg}&project=${focusedProject}`;
         const res = await axios.get(url);
         setMetrics(res.data);
     };

@@ -9,10 +9,13 @@ const Setting = () => {
     const userId = localStorage.getItem('userId');
     const [userData, setUserData] = useState({ username: '', avatar: '', totalRepos: 0 });
     const [isInviteOpen, setIsInviteOpen] = useState(false);
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 useEffect(() => {
         const fetch = async () => {
-            const res = await axios.get(`http://localhost:3000/api/v1/auth/users/github/${userId}`);
+             
+
+            const res = await axios.get(`${backendUrl}/api/v1/auth/users/github/${userId}`);
             // const repos = res.data.monitoredRepos || [];
             const rawRepos = res.data.monitoredRepos;
             const repoCount = Array.isArray(rawRepos) ? rawRepos.length : 0;
@@ -38,7 +41,7 @@ const Delete = async()=>{
 
     if (!confirmDelete) return;
     try{
-        const response = await axios.delete(`http://localhost:3000/api/v1/auth/delete/${userId}`);
+        const response = await axios.delete(`${backendUrl}/api/v1/auth/delete/${userId}`);
 
         if (response.status === 200) {
             alert("Account deleted successfully.");
@@ -58,7 +61,7 @@ const Unlink = async(req,res)=>{
        const confirmLink = window.confirm("Are you sure? This will stop data syncing from your GitHub.");
        if(!confirmLink)return ;
        try{
-           const response = await axios.put(`http://localhost:3000/api/v1/auth/unlink/${userId}`);
+           const response = await axios.put(`${backendUrl}/api/v1/auth/unlink/${userId}`);
            if(response.status === 200)
            {
             alert("GitHub unlinked! Please re-connect to continue using the tool")

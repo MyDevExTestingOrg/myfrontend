@@ -8,6 +8,7 @@ import Footer from '../component/Footer.jsx'
 function Landing() {
   const [darkMode,setDarkMode] = useState(false);
 
+
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);

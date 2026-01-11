@@ -12,7 +12,8 @@ const TeamDashboard = () => {
     const [isProfileOpen, setIsProfileOpen] = useState(false);
     const [trendData, setTrendData] = useState([]);
     const [loading, setLoading] = useState(true); 
-    
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
     const [userData, setUserData] = useState({
         username: '',
         avatar: '',
@@ -28,12 +29,11 @@ const TeamDashboard = () => {
         avgPrSize: 0
     });
 
-    // 1. केवल असाइन की गई रिपोज़ के मैट्रिक्स लाना
     useEffect(() => {
         const fetchMetrics = async () => {
             setLoading(true);
             try {
-                const res = await axios.get(`http://localhost:3000/api/manager/manager-analytics/${userId}`);
+                const res = await axios.get(`${backendUrl}/api/manager/manager-analytics/${userId}`);
                 setMetrics(res.data);
             } catch (err) {
                 console.error("Error fetching metrics:", err);
@@ -59,11 +59,10 @@ const TeamDashboard = () => {
         getTrends();
     }, [userId]);
 
-    // 3. प्रोफाइल डेटा फेच
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/api/v1/auth/users/github/${userId}`);
+                const res = await axios.get(`${backendUrl}/api/v1/auth/users/github/${userId}`);
                 setUserData({
                     username: res.data.username,
                     avatar: res.data.avatar_url || `https://ui-avatars.com/api/?name=${res.data.username}`,
@@ -85,7 +84,6 @@ const TeamDashboard = () => {
 
     return (
         <div className="min-h-screen bg-[#f8fafc] font-sans text-slate-900">
-            {/* Header - No Invite/Settings for Team Lead */}
             <header className="flex justify-between items-center p-4 md:px-10 bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center gap-3">
                     <img src="./images/logo1.png" alt="Logo" className="h-8" />
@@ -109,7 +107,6 @@ const TeamDashboard = () => {
                                     <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest">Team Lead Profile</p>
                                     <p className="text-sm font-black text-emerald-600">@{userData.username}</p>
                                 </div>
-                                {/* Invite and Settings buttons removed for Team Lead role */}
                                 <div className="pt-2">
                                     <button onClick={handleLogout} className="w-full text-left px-5 py-3 text-sm font-black text-rose-500 hover:bg-rose-50 flex items-center gap-3 uppercase tracking-widest">
                                         <LogOut size={18} /> Sign Out
@@ -122,7 +119,6 @@ const TeamDashboard = () => {
             </header>
 
             <div className="flex">
-                {/* Sidebar - Viewing Mode Only */}
                 <aside className="w-72 bg-white border-r border-slate-100 p-8 flex flex-col sticky top-20 h-[calc(100vh-80px)]">
                     <nav className="space-y-3 flex-1">
                         <button className="w-full flex items-center gap-4 p-4 bg-emerald-50 text-emerald-600 rounded-2xl font-black text-xs uppercase tracking-widest">
@@ -153,7 +149,6 @@ const TeamDashboard = () => {
                             </p>
                         </div>
 
-                        {/* Metrics Cards - Isolated to assigned repos */}
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                             <MetricCard 
                                 title="Avg. Cycle Time" 
@@ -181,7 +176,6 @@ const TeamDashboard = () => {
                             />
                         </div>
 
-                        {/* Trend Chart */}
                         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm mb-12">
                             <div className="mb-8">
                                 <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight">Scope Velocity Trend</h2>
@@ -190,7 +184,6 @@ const TeamDashboard = () => {
                             <TrendCharts data={trendData} />
                         </div>
 
-                        {/* Assigned Repos List */}
                         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
                             <div className="flex items-center gap-3 mb-6">
                                 <Info size={16} className="text-slate-400" />

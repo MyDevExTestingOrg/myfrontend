@@ -2,7 +2,9 @@ import React from "react";
 function SignIn() {
 
   const handleGitHubSignIn = () => {
-    const loginUrl = 'http://localhost:3000/api/v1/auth/github/login';
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    const loginUrl = `${backendUrl}/api/v1/auth/github/login`;
     window.location.href = loginUrl;
   };
 
