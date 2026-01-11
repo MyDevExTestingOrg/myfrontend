@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, GitCommit, AlertCircle } from 'lucide-react';
 
-// TeamActivity.jsx
 const TeamActivity = () => { 
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
@@ -28,7 +27,6 @@ const TeamActivity = () => {
         if (userId && userId !== "null") fetchTeamActivity();
     }, [userId]);
 
-    // Loading State
     if (loading) return <div className="p-20 text-center font-black text-slate-400">LOADING TEAM STATUS...</div>;
 
     return (
@@ -48,7 +46,6 @@ const TeamActivity = () => {
                                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{lead.teamName}</p>
                                         
                                         <div className="mt-4 flex flex-wrap gap-2">
-                                            {/* Optional Chaining (?.) zaroori hai crash rokne ke liye */}
                                             {lead.assignedRepos?.map(repo => (
                                                 <span key={repo} className="px-3 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[9px] font-black text-slate-500 uppercase">
                                                     {repo}
@@ -57,7 +54,6 @@ const TeamActivity = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {/* Activity Stats ... (Keep same) */}
                             </div>
                         </div>
                     ))

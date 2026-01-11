@@ -24,7 +24,7 @@ function HeroSection() {
 <div className="max-w-7xl mx-auto px-7 py-6">
   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-    {/* //left  */}
+    
 
     <div className="bg-white dark:bg-gray-400 shadow-lg rounded-xl p-6">
       <h2 className="text-2xl font-bold mb-4 text-white">The Problem</h2>
@@ -57,7 +57,6 @@ function HeroSection() {
       </ul>
     </div>
 
-{/* right */}
    <div className="bg-white dark:bg-gray-400 shadow-lg rounded-xl p-6">
       <h2 className="text-2xl font-bold mb-4 text-white">Our Solution</h2>
       <img src="./images/Happ.jpeg" alt="" className="" />

@@ -44,7 +44,6 @@ const TeamDashboard = () => {
         if (userId) fetchMetrics();
     }, [userId]);
 
-    // 2. ट्रेंड डेटा
     useEffect(() => {
         const getTrends = async () => {
             if (userId) {

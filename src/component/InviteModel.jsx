@@ -10,8 +10,7 @@ const InviteModal = ({ isOpen, onClose, orgId }) => {
     const [selectedRepos, setSelectedRepos] = useState([]); 
     
     const userId = localStorage.getItem('userId');
-    const userRole = localStorage.getItem('userRole'); // 'CTO' या 'ProjectManager'
-
+    const userRole = localStorage.getItem('userRole'); 
     useEffect(() => {
         const initData = async () => {
             if (!isOpen) return;

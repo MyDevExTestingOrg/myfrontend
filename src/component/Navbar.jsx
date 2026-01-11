@@ -6,6 +6,7 @@ function Navbar({ darkMode, setDarkMode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
     const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
     useEffect(() => {
         const verifyUser = async () => {

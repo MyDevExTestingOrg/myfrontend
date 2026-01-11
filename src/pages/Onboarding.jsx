@@ -112,7 +112,6 @@ function Onboarding() {
                 <p className="text-slate-500 mt-1">Connect your organizations and projects to start monitoring.</p>
             </header>
 
-            {/* Step 1: Org Filter */}
             <section className="bg-white shadow-sm rounded-2xl p-6 mb-8 border border-slate-200">
                 <h2 className="text-lg font-bold mb-4 text-slate-800">Step 1: Select Business Unit</h2>
                 <select 
@@ -128,7 +127,6 @@ function Onboarding() {
                 </select>
             </section>
 
-            {/* Step 2: Grouped Repo Selection */}
             <section className="space-y-6">
                 <h2 className="text-lg font-bold text-slate-800 px-2">Step 2: Select Repositories</h2>
                 {Object.entries(groupedRepos).map(([org, items]) => (
@@ -170,7 +168,6 @@ function Onboarding() {
                 ))}
             </section>
 
-            {/* Footer Action */}
             <div className="sticky bottom-8 mt-12">
                 <div className="max-w-xs mx-auto">
                     <button 
