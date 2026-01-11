@@ -24,11 +24,9 @@ function Onboarding() {
         const fetchUserAndData = async () => {
             try {
                 setLoading(true);
-                // User info fetch karna
                 const userRes = await axios.get(`${backendUrl}/api/v1/auth/users/github/${userId}`);
                 setUsername(userRes.data.username);
 
-                // Orgs aur Repos fetch karna
                 const res = await axios.get(`${backendUrl}/api/v1/auth/user/orgs/${userId}`);
                 setOrganizations(res.data.orgs || []);
                 setRepos(res.data.repos || []);
@@ -41,7 +39,6 @@ function Onboarding() {
         fetchUserAndData();
     }, [userId]);
 
-    // 1. Logic: Repositories ko Organization ke hisaab se group karna
     const groupedRepos = useMemo(() => {
         const filtered = filterOrg === "all" 
             ? repos 
@@ -79,7 +76,6 @@ function Onboarding() {
         
         try {
             setSubmitting(true);
-            // Selected repos ko organization data ke saath bhejna
             await axios.post(`${backendUrl}/api/v1/auth/setup-repos`, {
                 userId,
                 monitoredRepos: selectedRepos 
