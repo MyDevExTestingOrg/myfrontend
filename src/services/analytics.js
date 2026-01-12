@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = "http://localhost:3000/api/v1/webhooks"
+const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api/v1/webhooks`
 
 export const fetchCTOMetrics = async(userId)=>{
     try {
