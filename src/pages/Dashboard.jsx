@@ -20,7 +20,7 @@ const Dashboard = () => {
     
     const { metrics, loading } = useAnalytics(userId, selectedOrg); 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
+    console.log(backendUrl);
 
     useEffect(() => {
         if (userId) {
